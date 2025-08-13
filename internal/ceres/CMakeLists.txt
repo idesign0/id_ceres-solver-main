@@ -181,14 +181,19 @@ if (LAPACK_FOUND)
 endif ()
 
 if (OPENMP_FOUND)
-  # OpenMP support in Clang requires a non-GNU OpenMP library.
-  if (CMAKE_COMPILER_IS_GNUCXX)
-    list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES gomp)
+  # Modern CMake way: prefer imported OpenMP target
+  if(TARGET OpenMP::OpenMP_CXX)
+    list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES OpenMP::OpenMP_CXX)
+  else()
+    # Fallback for older CMake / manual handling
+    if (CMAKE_COMPILER_IS_GNUCXX)
+      list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES gomp)
+    endif()
+    if (NOT MSVC)
+      list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${CMAKE_THREAD_LIBS_INIT})
+    endif()
   endif()
-  if (NOT MSVC)
-    list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${CMAKE_THREAD_LIBS_INIT})
-  endif()
-endif (OPENMP_FOUND)
+endif()
 
 if (TBB_FOUND)
   list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${TBB_LIBRARIES})

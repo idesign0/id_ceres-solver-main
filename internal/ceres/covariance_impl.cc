@@ -671,7 +671,7 @@ bool CovarianceImpl::ComputeCovarianceValuesUsingSuiteSparseQR() {
   const SuiteSparse_long rank =
       SuiteSparseQR<double>(SPQR_ORDERING_BESTAMD,
                             SPQR_DEFAULT_TOL,
-                            cholmod_jacobian.ncol,
+                            static_cast<SuiteSparse_long>(cholmod_jacobian.ncol),
                             &cholmod_jacobian,
                             &R,
                             &permutation,
